@@ -6,7 +6,7 @@ export const handleRegistration = (email, password, passwordConfirmation, histor
     axios.post('/api/auth', { email, password, password_confirmation: passwordConfirmation })
       .then( res => {
         setAuthHeaders(res.headers);
-        dispatch({ type: 'LOGIN', user: res.data.data });
+        dispatch({ type: 'LOGIN', user: res.data.data, headers: res.headers });
         history.push('/');
       })
       .catch( res => {
@@ -39,7 +39,7 @@ export const handleLogin = (email, password, history) => {
     axios.post('/api/auth/sign_in', { email, password })
       .then( res => {
         setAuthHeaders(res.headers);
-        dispatch({ type: 'LOGIN', user: res.data.data });
+        dispatch({ type: 'LOGIN', user: res.data.data, headers: res.headers });
         history.push('/');
       })
       .catch( res => {
@@ -48,3 +48,15 @@ export const handleLogin = (email, password, history) => {
       })
   }
 }
+
+export const validateToken = (callBack = () => {}) => {
+    return dispatch => {
+      dispatch({ type: 'VALIDATE_TOKEN' });
+      const headers = axios.defaults.headers.common;
+      axios.get('/api/auth/validate_token', headers)
+        .then(res => {
+          const user = res.data.data;
+          dispatch({ type: 'LOGIN', user: res.data.data, headers: res.headers });
+      }).catch(() => callBack());
+    };
+  };

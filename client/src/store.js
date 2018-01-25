@@ -1,9 +1,13 @@
 import { createStore, compose, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers/index';
+import apiMiddleware from 'redux-devise-axios';
+import axios from 'axios';
+
+const options = { axios }
 
 const enhancers = compose(
-  applyMiddleware(thunk),
+  applyMiddleware(thunk, apiMiddleware(options)),
   window.devToolsExtension ? window.devToolsExtension() : f => f
 );
 
